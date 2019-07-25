@@ -10,24 +10,26 @@ void showMatrix(std::vector<std::vector<long double>> m);
 int main()
 {
     double maxCorr{0.0}, cov{0.0};
+    double delitel{0.0};
     int maxCorrX, maxCorrY;
     std::vector<std::vector<long double>> map = getMap(64);
     std::vector<std::vector<long double>> recshot = getShot(4, map, 2, 2);
     std::vector<std::vector<long double>> curShot;
     curShot.resize(4);
+    delitel = map.size()/recshot.size();
     showMatrix(map);
     std::cout<<std::endl;
     std::cout<<"Required shot: "<<std::endl;
     showMatrix(recshot);
     //std::cout<<"Covarience = "<<corr(shot, map)<<std::endl;
-    for(int i = 0; i < map.size()/2; ++i)
+    for(int i = 0; i < map.size()/delitel; ++i)
     {
         for(int j = 0; j < map.size()/2; ++j)
         {
             curShot = getShot(4, map, i, j);
             std::cout<<"Current shot "<<i<<" "<<j<<"\n";
             cov = corr(curShot, recshot);
-            std::cout<<"Current covarience: "<<corr<<std::endl;
+            std::cout<<"Current covarience: "<<cov<<std::endl;
             if(maxCorr < cov)
             {
                   maxCorr = cov;
@@ -43,8 +45,8 @@ int main()
 }
 long double corr(std::vector<std::vector<long double>> shot, std::vector<std::vector<long double>> map)
 {
-    /*if (shot.size() != map.size())
-                    return 10;*/
+    if (shot.size() != map.size())
+                    return 10;
     long double sumX = 0;
     long double sumX2 = 0;
     long double sumY = 0;
@@ -81,7 +83,7 @@ void showMatrix(std::vector<std::vector<long double>> m)
 }
 std::vector<std::vector<long double>> getMap(int n)
 {
-    generator gen(100.0L, 1.0L);
+    generator gen(1000.0L, 250.0L);
     std::vector<std::vector<long double>> res;
     res.resize(n);
     for(int i = 0; i < n; ++i)
