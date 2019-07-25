@@ -4,16 +4,26 @@
 #include "generator.h"
 
 long double corr(std::vector<std::vector<long double>> shot, std::vector<std::vector<long double>> map);
-std::vector<std::vector<long double>> getMap(int n);
+std::vector<std::vector<long double>> getMap(int n, long double mm, long double dm);
 std::vector<std::vector<long double>> getShot(int n, std::vector<std::vector<long double>> m, int h, int w);
 void showMatrix(std::vector<std::vector<long double>> m);
 int main()
 {
     double maxCorr{0.0}, cov{0.0};
-    double delitel{0.0};
-    int maxCorrX, maxCorrY;
-    std::vector<std::vector<long double>> map = getMap(64);
-    std::vector<std::vector<long double>> recshot = getShot(4, map, 2, 2);
+    int delitel{0};
+    long double mm{1000.}, dm{250.};
+    int maxCorrX, maxCorrY, mapSize, shotSize;
+    std::cout<<"Input size of the map"<<std::endl;
+    std::cin>>mapSize;
+    std::cout<<"Input size of the shot. Map and shot sizes must be multiple"<<std::endl;
+    std::cin>>shotSize;
+    std::cout<<"Input mathematical expectation of elevation for the map"<<std::endl;
+    std::cin>>mm;
+    std::cout<<"Input dispersion of elevation for the map"<<std::endl;
+    std::cin>>dm;
+
+    std::vector<std::vector<long double>> map = getMap(mapSize, mm, dm);
+    std::vector<std::vector<long double>> recshot = getShot(shotSize, map, 2, 2);
     std::vector<std::vector<long double>> curShot;
     curShot.resize(4);
     delitel = map.size()/recshot.size();
@@ -81,9 +91,9 @@ void showMatrix(std::vector<std::vector<long double>> m)
         std::cout<<"\n";
     }
 }
-std::vector<std::vector<long double>> getMap(int n)
+std::vector<std::vector<long double>> getMap(int n, long double mm, long double dm)
 {
-    generator gen(1000.0L, 250.0L);
+    generator gen(mm, dm);
     std::vector<std::vector<long double>> res;
     res.resize(n);
     for(int i = 0; i < n; ++i)
@@ -97,7 +107,7 @@ std::vector<std::vector<long double>> getMap(int n)
 }
 std::vector<std::vector<long double>> getShot(int n, std::vector<std::vector<long double>> m, int h, int w)
 {
-    generator gen(5.0L, 3.0L);
+    generator gen(10, 5);
     std::vector<std::vector<long double>> res;
     res.resize(n);
     for(int i = h; i < res.size() + h; ++i)
